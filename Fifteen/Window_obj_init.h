@@ -16,10 +16,7 @@ class Window_obj_init {
 						Методы окна
 --------------------------------------------------------------*/
 public:
-	Window_obj_init(); //конструктор: создаю окно - отлавливаю исключения
-	~Window_obj_init() {} //деструктор
-	void init_window(); //создаю окно 
-	
+
 	//статическая функция CALLBACK - передает вызов объектной функции CALLBACK
 	static LRESULT CALLBACK application_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	
@@ -32,7 +29,6 @@ private:
 	HWND m_hwnd{}; //дескриптор главного окна приложения
 	int width_window{ 405 }; //ширина окна
 	int height_window{ 405 }; //высота окна
-	const int ID_TIMER{ 1 }; //ID таймера - номер таймера
 	
 /*-------------------------------------------------------------
 					   Методы приложения

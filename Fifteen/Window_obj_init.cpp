@@ -1,58 +1,5 @@
 ﻿#include "Window_obj_init.h"
 
-Window_obj_init::Window_obj_init(){ //конструктор - создание окна - блок исключений
-	using std::wstring;
-	using std::string;
-
-	try {
-		init_window();
-	}
-	catch (const std::exception& e) {
-		string expt_data = e.what();
-		MessageBox(nullptr, wstring(begin(expt_data),
-			end(expt_data)).c_str(), L"Ошибка", MB_ICONERROR | MB_OK);
-		ExitProcess(EXIT_FAILURE);
-	}
-}
-
-
-void Window_obj_init::init_window() {
-	//создание класса окна и его заполнение
-	WNDCLASSEX wc{ sizeof(WNDCLASSEX) };
-	wc.cbClsExtra = 0;
-	wc.cbWndExtra = 0;
-	wc.hbrBackground = reinterpret_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
-	wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
-	wc.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
-	wc.hIconSm = LoadIcon(nullptr, IDI_APPLICATION);
-	wc.hInstance = GetModuleHandle(nullptr); //GetModuleHandle возвращает дескриптор файла, используемого для создания вызывающего процесса.
-	wc.lpfnWndProc = Window_obj_init::application_proc;
-	wc.lpszClassName = name_class_window.c_str();
-	wc.lpszMenuName = nullptr;
-	wc.style = CS_VREDRAW | CS_HREDRAW;
-
-	if (!RegisterClassEx(&wc)) //регистрация класса окна
-		throw std::runtime_error("Error, can't register main window class!");
-
-	m_hwnd = CreateWindowEx(0, name_class_window.c_str(),
-		name_header_window.c_str(), WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX ,
-		(GetSystemMetrics(SM_CXSCREEN) - width_window) / 2, //расположение окна в центре экрана по горизонтали
-		(GetSystemMetrics(SM_CYSCREEN) - height_window) / 2, //расположение окна в центре экрана по вертикали
-		width_window, height_window, nullptr, nullptr, nullptr, this);
-	
-	RECT rect;
-	GetClientRect(m_hwnd, &rect);
-	width_window += width_window - (rect.right - rect.left);
-	height_window += height_window - (rect.bottom - rect.top);
-
-	SetWindowPos(m_hwnd, HWND_TOP, 0, 0, width_window, height_window, SWP_NOMOVE | SWP_NOZORDER);
-
-
-	if (!m_hwnd)
-		throw std::runtime_error("Error, can't create main window!");
-}
-
-
 int Window_obj_init::Run() { //вечный цикл - отлавливаю исключения
 	try {
 		return run();
@@ -68,13 +15,17 @@ int Window_obj_init::Run() { //вечный цикл - отлавливаю ис
 
 
 int Window_obj_init::run() { //цикл обработки сообщений
-	MSG msg{};
+	
+	Func f = Window_obj_init::application_proc;
+	using WOB = Window_obj_init;
 
-	app.init();
-
+	m_hwnd = window_create<WOB>(f, name_class_window, name_header_window,
+								width_window, height_window, this);
+	
 	ShowWindow(m_hwnd, SW_SHOWDEFAULT); //первый показ окна
 	UpdateWindow(m_hwnd); //обновление окна
 	
+	MSG msg{};
 
 	while (GetMessage(&msg, nullptr, 0, 0)) {
 		TranslateMessage(&msg);
@@ -109,12 +60,14 @@ LRESULT Window_obj_init::application_proc(HWND hwnd, UINT uMsg, WPARAM wParam, L
 
 //объектная функция обратного вызова
 LRESULT Window_obj_init::window_proc(UINT uMsg, WPARAM wParam, LPARAM lParam) {
+		/*
 		HDC hDC;
 		PAINTSTRUCT ps;
 		RECT rect;
 		HBRUSH  brush, old_brush;
 		HFONT hFont, old_hFont;
 		std::wstring t;
+		*/
 
 		switch (uMsg)
 		{

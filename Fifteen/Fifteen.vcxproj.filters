@@ -32,5 +32,8 @@
     <ClInclude Include="Window_obj_init.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="citation.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
