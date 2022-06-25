@@ -5,6 +5,8 @@
 #include <ctime>
 #include <utility>
 #include <cmath>
+#include <exception>
+#include <stdexcept>
 #include "citation.h"
 
 /*-------------------------------------------------------------
